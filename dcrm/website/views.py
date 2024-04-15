@@ -1,11 +1,13 @@
 from django.shortcuts import render, redirect
-from .forms import CreateUserForm, LoginForm
+from .forms import CreateUserForm, LoginForm, CreateRecordForm
 from django.contrib.auth import authenticate 
 from django.contrib.auth.models import auth
 from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 from django.http import HttpResponse
+from .models import Record
+
 
 def home(request):
     return render(request, 'website/index.html')
@@ -50,4 +52,22 @@ def user_logout(request):
 #dashboard
 @login_required(login_url='my-login')
 def dashboard(request):
-    return render(request, 'website/dashboard.html')
+
+    my_records = Record.objects.all()
+    context ={'records':my_records}
+    return render(request, 'website/dashboard.html', context=context)
+
+#Create a record
+@login_required(login_url='my-login')
+def create_record(request):
+
+    form = CreateRecordForm()
+    if request.method =="POST":
+        form = CreateRecordForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            return redirect("dashboard")
+        
+    context = {'create_form': form}
+    return render(request, 'website/create-record.html', context=context)

@@ -1,7 +1,42 @@
 {% extends 'website/base.html' %}
 
 {% block content %}
-
-    <h1>Welcome to the Dashboard {{user}}</h1>
+    <br>
+    <h5>Welcome to the Dashboard {{user}}</h5>
+    <hr>
+    <a class="btn btn-outline-primary btn-sm" href="{% url "create-record" %}">
+        Create Record
+    </a>
+    <hr>
+    <table class="table table-dark table-hover table-bordered">
+        <thead class="table-primary">
+            <tr>
+                <th scope="col"> ID </th>
+                <th scope="col"> Full Name </th>
+                <th scope="col"> Email </th>
+                <th scope="col"> Phone Number </th>
+                <th scope="col"> Address </th>
+                <th scope="col"> City </th>
+                <th scope="col"> Date Joined </th>
+                <th scope="col"> View </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if records %}
+                {% for record in records %}
+                    <tr>
+                        <td> {{record.id}}</td>
+                        <td> {{record.first_name}} {{record.last_name}} </td>
+                        <td> {{record.email}} </td>
+                        <td> {{record.phone}} </td>
+                        <td> {{record.address}} </td>
+                        <td> {{record.city}} </td>
+                        <td> {{record.creation_data}} </td>
+                        <td> VIEWS </td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+        </tbody>
+    </table>
 
 {% endblock %}
