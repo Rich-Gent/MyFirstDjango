@@ -28,4 +28,7 @@ urlpatterns = [
 
    #Create
    path('create-record', views.create_record, name="create-record"),
+
+   #Update
+   path('update-record/<int:pk>', views.update_record, name="update-record")
 ]
