@@ -5,7 +5,7 @@
     <h5>Welcome to the Dashboard {{user}}</h5>
     <hr>
     <a class="btn btn-outline-primary btn-sm" href="{% url "create-record" %}">
-        Create Record
+        Create Record &nbsp; <i class="fa fa-plus-circle" aria-hidden="true"></i>
     </a>
     <hr>
     <table class="table table-dark table-hover table-bordered">
@@ -32,7 +32,7 @@
                         <td> {{record.address}} </td>
                         <td> {{record.city}} </td>
                         <td> {{record.creation_data}} </td>
-                        <td> VIEWS </td>
+                        <td> <a class="btn btn-success" href="{% url "record" record.id %}" ><i class="fa fa-eye" aria-hidden="true"></i></a></td>
                     </tr>
                 {% endfor %}
             {% endif %}
