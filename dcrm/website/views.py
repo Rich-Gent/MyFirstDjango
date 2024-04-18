@@ -3,6 +3,7 @@ from .forms import CreateUserForm, LoginForm, CreateRecordForm, UpdateRecordForm
 from django.contrib.auth import authenticate 
 from django.contrib.auth.models import auth
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 # Create your views here.
 
 from django.http import HttpResponse
@@ -20,6 +21,7 @@ def register(request):
         form = CreateUserForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, "Account Successfully created!")
             return redirect('my-login')
     context = {'form': form}
 
@@ -39,6 +41,7 @@ def my_login(request):
 
             if user is not None:
                 auth.login(request, user)
+                messages.success(request, "You have logged in successfully!")
                 return redirect('dashboard')
     context = {'login_form':form}
     return render(request, 'website/my-login.html',context=context)
@@ -47,6 +50,7 @@ def my_login(request):
 def user_logout(request):
 
     auth.logout(request)
+    messages.success(request, "You have logged out successfully!")
     return redirect("my-login")
 
 #dashboard
@@ -67,6 +71,7 @@ def create_record(request):
 
         if form.is_valid():
             form.save()
+            messages.success(request, "Record Successfully created!")
             return redirect("dashboard")
         
     context = {'create_form': form}
@@ -84,6 +89,7 @@ def update_record(request, pk):
 
         if form.is_valid():
             form.save()
+            messages.success(request, "Record Successfully updated!")
             return redirect("dashboard")
     context = {'update_form': form}
     return render(request, 'website/update-record.html', context=context)
@@ -100,7 +106,7 @@ def singular_record(request, pk):
 def delete_record(request, pk):
     record = Record.objects.get(id=pk)
     record.delete()
-
+    messages.success(request, "Record Successfully Deleted!")
     return redirect("dashboard")
 
 
