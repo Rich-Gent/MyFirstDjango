@@ -8,7 +8,8 @@ from django.contrib import messages
 
 from django.http import HttpResponse
 from .models import Record
-
+import datetime
+import requests
 
 def home(request):
     return render(request, 'website/index.html')
@@ -109,4 +110,26 @@ def delete_record(request, pk):
     messages.success(request, "Record Successfully Deleted!")
     return redirect("dashboard")
 
+#request weather
+def weatherRequest(request):
+    API_KEY = open("API_KEY", "r").read()
+    current_weather_url = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/{}/"+ datetime.today().strftime('%Y-%m-%d') +"?key={}"
+    # forecast_url = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/{},{}/{}/{}?key={}"
 
+    if request.method == "POST":
+        city1 = request.POST['city1']
+
+    else:
+        return render(request, "website/weather.html")
+    
+def fetch_weather_and_forecast(city, api_key, current_weather_url, forecast_url):
+    response = requests.get(current_weather_url.format(city,api_key)).json()
+    lat, lon = response["lattitude"],response["longitude"]
+    #forecast_response = requests.get(forecast_url.format(lat,lon,))
+
+    weather_data = {
+        "city": city,
+        "temperature": round(response["currentConditions"]["temp"],2),
+        "description": response["days"][0]["description"],
+        "icon":
+    }
