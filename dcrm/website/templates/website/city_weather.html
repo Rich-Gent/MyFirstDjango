@@ -1,0 +1,36 @@
+{% if weather_data %}
+    {% load static %}
+    <div class="card mb-3 w-50" style="margin:auto; padding-bottom:20px;">
+        <h1 class="card-header">{{ weather_data.city}}</h1>
+        <h2 class="card-title">&nbsp;&nbsp;{{ weather_data.temperature }}°C</h2>
+        <p class="card-text">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ weather_data.description}}</p>
+        <img src="{% static "img/icons/" %}{{weather_data.icon}}.svg" alt="{{weather_data.description}}">
+    </div>
+{% endif %}
+
+{% if daily_forecasts %}
+    {% load static %}
+    <br>
+    <br>
+    <hr>
+    <h2>5-Day Forecasts</h2>
+    <br>
+    <br>
+    <ul class="nav nav-tabs" role="tablist">
+        {% for forecast in daily_forecasts %}
+            <li class="nav-item" role="presentation">
+                <a class="nav-link {% if forloop.first %}active{% endif %}" data-bs-toggle="tab" href="#{{forecast.day}}" aria-selected="{% if forloop.first %}true{% else %}false{% endif %}" role="tab" {% if not forloop.first  %}tabindex="-1"{% endif %}>{{forecast.day}}</a>
+            </li>
+        {% endfor %}
+    </ul>
+    <div id="myTabContent" class="tab-content" style="position:relative">
+        {% for forecast in daily_forecasts %}
+            <div class="tab-pane fade{% if  forloop.first %} active show{% endif %}" id="{{forecast.day}}" role="tabpanel">
+                <h3>{{forecast.day}}</h3>
+                <p>Temperature between: {{forecast.min_temp}}°C-{{forecast.max_temp}}°C</p>
+                <p>{{forecast.description}}</p>
+                <img src="{% static "img/icons/"%}{{forecast.icon}}.svg" alt="{{forecast.description}}" style="top:20px; left:600px; width:100px; position:absolute;">
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}

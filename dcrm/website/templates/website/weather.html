@@ -2,5 +2,19 @@
 
 {% block content  %}
 
+    <form method="post">
+        {% csrf_token %}
+        <div class="input-group mb-3 w-50" style="margin:auto;">
+            <input class="form-control" type="text" name="city1" placeholder="Enter City" aria-label="Enter City" aria-describedby="button-addon2">
+            <button class="btn btn-primary" id="button-addon2" type="submit">Get Weather Forecast</button>
+        </div>
+    </form>
 
+    <div class="container">
+        {% if weather_data1 %}
+            <div class="city-container">
+                {% include "website/city_weather.html" with weather_data=weather_data1 daily_forecasts=daily_forecasts1 %}
+            </div>
+        {% endif %}
+    </div>
 {% endblock  %}

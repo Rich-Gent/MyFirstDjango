@@ -8,8 +8,11 @@ from django.contrib import messages
 
 from django.http import HttpResponse
 from .models import Record
+from datetime import date
 import datetime
 import requests
+from django.conf import settings
+import os
 
 def home(request):
     return render(request, 'website/index.html')
@@ -112,24 +115,43 @@ def delete_record(request, pk):
 
 #request weather
 def weatherRequest(request):
-    API_KEY = open("API_KEY", "r").read()
-    current_weather_url = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/{}/"+ datetime.today().strftime('%Y-%m-%d') +"?key={}"
+    api_path = os.path.join(settings.BASE_DIR,'API_KEY')
+    API_KEY = open(api_path, "r").read()
+    current_weather_url = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/{}/?key={}"
     # forecast_url = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/{},{}/{}/{}?key={}"
 
     if request.method == "POST":
         city1 = request.POST['city1']
+        weather_data1, daily_forecasts1 = fetch_weather_and_forecast(city1, API_KEY, current_weather_url)
 
+        context={
+            "weather_data1": weather_data1,
+            "daily_forecasts1": daily_forecasts1
+        }
+        return render(request, "website/weather.html",context)
     else:
         return render(request, "website/weather.html")
     
-def fetch_weather_and_forecast(city, api_key, current_weather_url, forecast_url):
+def fetch_weather_and_forecast(city, api_key, current_weather_url):
     response = requests.get(current_weather_url.format(city,api_key)).json()
-    lat, lon = response["lattitude"],response["longitude"]
+    #lat, lon = response["lattitude"],response["longitude"]
     #forecast_response = requests.get(forecast_url.format(lat,lon,))
 
     weather_data = {
         "city": city,
-        "temperature": round(response["currentConditions"]["temp"],2),
+        "temperature": round((response["currentConditions"]["temp"]-32)*(5/9),2),
         "description": response["days"][0]["description"],
-        "icon":
+        "icon": response["days"][0]["icon"]
     }
+
+    daily_forecasts = []
+    for daily_data in response['days'][:5]:
+        daily_forecasts.append({
+            "day": datetime.datetime.fromtimestamp(daily_data['datetimeEpoch']).strftime("%A"),
+            "min_temp": round((daily_data['tempmin']-32)*(5/9),2),
+            "max_temp": round((daily_data['tempmax']-32)*(5/9),2),
+            "description": daily_data['description'],
+            "icon": daily_data['icon']
+        })
+    
+    return weather_data, daily_forecasts
