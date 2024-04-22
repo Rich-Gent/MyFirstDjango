@@ -4,9 +4,9 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import auth
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+
 # Create your views here.
 
-from django.http import HttpResponse
 from .models import Record
 from datetime import date
 import datetime
@@ -121,14 +121,18 @@ def weatherRequest(request):
     # forecast_url = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/{},{}/{}/{}?key={}"
 
     if request.method == "POST":
-        city1 = request.POST['city1']
-        weather_data1, daily_forecasts1 = fetch_weather_and_forecast(city1, API_KEY, current_weather_url)
+        try:
+            city1 = request.POST['city1']
+            weather_data1, daily_forecasts1 = fetch_weather_and_forecast(city1, API_KEY, current_weather_url)
 
-        context={
-            "weather_data1": weather_data1,
-            "daily_forecasts1": daily_forecasts1
-        }
-        return render(request, "website/weather.html",context)
+            context={
+                "weather_data1": weather_data1,
+                "daily_forecasts1": daily_forecasts1
+            }
+            return render(request, "website/weather.html",context)
+        except:
+            messages.error(request, "Please enter a valid city or town!")
+            return render(request, "website/weather.html")
     else:
         return render(request, "website/weather.html")
     
