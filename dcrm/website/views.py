@@ -114,6 +114,7 @@ def delete_record(request, pk):
     return redirect("dashboard")
 
 #request weather
+@login_required(login_url='my-login')
 def weatherRequest(request):
     api_path = os.path.join(settings.BASE_DIR,'API_KEY')
     API_KEY = open(api_path, "r").read()

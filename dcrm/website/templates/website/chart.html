@@ -1,0 +1,49 @@
+{% load static %}
+<div>
+    <canvas id="myChart"></canvas>
+</div>
+<script src="{% static 'js/chart.js'%}"></script>
+<script src="{% static 'js/charttrend.js'%}"></script>
+  <script>
+    const ctx = document.getElementById('myChart');
+  
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: [
+            {% if daily_forecasts %}
+                {% for forecast in daily_forecasts %}
+                   '{{forecast.day}}',
+                {% endfor %}
+            {% endif %} 
+        ],
+        datasets: [{
+          label: 'Temperature',
+          data:[ 
+          {% if daily_forecasts %}
+            {% for forecast in daily_forecasts %}
+                {{forecast.min_temp}},
+            {% endfor %}
+          {% endif %} 
+        ] 
+        ,
+          borderWidth: 1,
+          trendlineLinear: {
+            colorMin: "red",
+            colorMax: "red",
+            lineStyle: "dotted|solid",
+            width: 4
+        }
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+   
+    });
+  </script>
+   
